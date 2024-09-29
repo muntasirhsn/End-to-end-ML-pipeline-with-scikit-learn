@@ -3,4 +3,10 @@ A comprehensive end-to-end machine learning pipeline that efficiently handles da
 
 Pipeline was built by using Scikit-learn.
 
-Run 'pipeline.py' to execute the pipeline
+To begin experimenting:
+* Fork the repo
+* Open it on github devops and open a new terminal
+* Create a virtual env and activate
+* Install dependencies on requiremnts.txt (pip install -r requirements.txt)
+* In the terminal run: python pipeline.py. Check for progress on model evaluation and pipeline training completion.
+* To test model for inference, run: python test_model.py
