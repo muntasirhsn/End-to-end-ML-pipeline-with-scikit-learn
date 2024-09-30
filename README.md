@@ -1,9 +1,9 @@
 # End-to-end-ML-pipeline-with-scikit-learn
 A comprehensive end-to-end machine learning pipeline that efficiently handles data preprocessing, model training, and prediction on test/inference data. The pipeline automates the workflow from data ingestion and feature engineering to model deployment, ensuring robust and scalable machine learning solutions. To demonstrate the pipeline operation, a simple example dataset from [Kaggle](https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques/data) was utilized. 
 
-Pipeline was built by using Scikit-learn.
+Pipeline was built by using Scikit-learn and successfully tested on github devops.
 
-To begin experimenting:
+The To begin experimenting:
 * Fork the repo
 * Open it on github devops and open a new terminal
 * Create a virtual env and activate
