@@ -300,24 +300,29 @@ class FeatureNamer(BaseEstimator, TransformerMixin):
             X = pd.DataFrame(X)
 
         # Handle Format 2: List of lists/arrays
-        elif isinstance(X, list) and isinstance(X[0], list):
+        elif isinstance(X, list | np.ndarray) and isinstance(X[0], list | np.ndarray):
             X = pd.DataFrame(X, columns=self.feature_names)
 
-        # Handle Format 3: Dictionary with a list of lists under any key
+        # Handle Format 3 & 4: Dictionary of lists
         elif isinstance(X, dict):
-            for key in X:
-                if isinstance(X[key], list) and isinstance(X[key][0], list):
-                    X = pd.DataFrame(X[key], columns=self.feature_names)
-                    break
-
-        # Handle Format 4: Dictionary of lists (keys are feature names)
-        elif set(X.keys()) == set(self.feature_names):
-            X = pd.DataFrame(X)
+            # Check if the dictionary keys match feature names
+            if set(X.keys()) == set(self.feature_names):
+                # If feature names are provided as keys, convert the dictionary directly
+                X = pd.DataFrame(X)
+            else:
+                # dictionary with a list of lists under any key 
+                for key in X:
+                    if isinstance(X[key], list) and isinstance(X[key][0], list):
+                        X = pd.DataFrame(X[key], columns=self.feature_names)
 
         # Handle DataFrames
         elif isinstance(X, pd.DataFrame):
             if X.columns.tolist() != self.feature_names:
                 X.columns = self.feature_names
+                
+        else:
+            # For any other format, assume it's a raw array/list of values
+            X = pd.DataFrame(X, columns=self.feature_names)
 
         return X
 
