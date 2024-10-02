@@ -286,7 +286,7 @@ scaler = RobustScaler()
 ohe = OneHotEncoder(drop='first', handle_unknown='ignore')
 
 
-# Transformer to assign feature names if missing and handle data of different formats like dictionaries, lists or arrays
+# Transformer to assign feature names if missing and handle data of different formats like dictionaries, lists or arrays for inference
 class FeatureNamer(BaseEstimator, TransformerMixin):
     def __init__(self, feature_names):
         self.feature_names = feature_names
@@ -295,32 +295,29 @@ class FeatureNamer(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
-        # Handle Format 1: List of dictionaries (common feature dictionary format)
+        # Handle Format 1: List of dictionaries
         if isinstance(X, list) and isinstance(X[0], dict):
             X = pd.DataFrame(X)
 
-        # Handle Format 2: List of lists/arrays (values without feature names)
+        # Handle Format 2: List of lists/arrays
         elif isinstance(X, list) and isinstance(X[0], list):
             X = pd.DataFrame(X, columns=self.feature_names)
 
-        # Handle Format 3: Dictionary of lists, where keys are either row indices or feature names
+        # Handle Format 3: Dictionary with a list of lists under any key
         elif isinstance(X, dict):
-            # Check if the dictionary keys match feature names
-            if set(X.keys()) == set(self.feature_names):
-                # If feature names are provided as keys, convert the dictionary directly
-                X = pd.DataFrame(X)
-            else:
-                # Otherwise, assume it's row indices and convert as before
-                X = pd.DataFrame(list(X.values()), columns=self.feature_names)
+            for key in X:
+                if isinstance(X[key], list) and isinstance(X[key][0], list):
+                    X = pd.DataFrame(X[key], columns=self.feature_names)
+                    break
 
-        # If it's already a DataFrame but columns don't match
+        # Handle Format 4: Dictionary of lists (keys are feature names)
+        elif set(X.keys()) == set(self.feature_names):
+            X = pd.DataFrame(X)
+
+        # Handle DataFrames
         elif isinstance(X, pd.DataFrame):
             if X.columns.tolist() != self.feature_names:
                 X.columns = self.feature_names
-
-        else:
-            # For any other format, assume it's a raw array/list of values
-            X = pd.DataFrame(X, columns=self.feature_names)
 
         return X
 
