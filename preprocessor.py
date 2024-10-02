@@ -314,6 +314,7 @@ class FeatureNamer(BaseEstimator, TransformerMixin):
                 for key in X:
                     if isinstance(X[key], list) and isinstance(X[key][0], list):
                         X = pd.DataFrame(X[key], columns=self.feature_names)
+                        break
 
         # Handle DataFrames
         elif isinstance(X, pd.DataFrame):
